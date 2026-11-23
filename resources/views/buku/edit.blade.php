@@ -16,7 +16,7 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 {{-- TODO 8: Tambahkan atribut enctype="multipart/form-data" pada form di bawah ini --}}
-                <form action="{{ route('buku.update', $buku->id) }}" method="POST">
+                <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -65,6 +65,28 @@
                     </div>
 
                     {{-- TODO 8: Tampilkan gambar sampul saat ini ($buku->cover) dan sediakan input file untuk mengganti sampul --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Sampul Saat Ini</label>
+                        <div class="mb-3">
+                            @if($buku->cover)
+                                <img src="{{ asset('storage/' . $buku->cover) }}" alt="Sampul Buku" class="img-thumbnail" style="max-height: 150px;">
+                            @else
+                                <p class="text-muted small fst-italic mb-0">Belum ada sampul yang diunggah.</p>
+                            @endif
+                        </div>
+
+                        <label for="cover" class="form-label fw-semibold">Ganti Sampul (Opsional)</label>
+                        <input type="file" class="form-control @error('cover') is-invalid @enderror" id="cover" name="cover" accept="image/jpeg,image/png,image/jpg" onchange="previewImage(event)">
+                        <div class="form-text">Biarkan kosong jika tidak ingin mengubah sampul. Format: JPG, JPEG, PNG. Maks 2 MB.</div>
+                        @error('cover')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        
+                        <!-- Wadah Pratinjau (Preview) untuk gambar baru -->
+                        <div class="mt-3">
+                            <img id="imagePreview" src="#" alt="Pratinjau Sampul Baru" class="img-thumbnail d-none" style="max-height: 200px;">
+                        </div>
+                    </div>
 
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ route('buku.index') }}" class="btn btn-light border px-4">Batal</a>
@@ -77,5 +99,19 @@
         </div>
     </div>
 </div>
-@endsection
 
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var preview = document.getElementById('imagePreview');
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+@endsection

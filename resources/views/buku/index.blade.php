@@ -69,6 +69,7 @@
                     <tr>
                         <th class="ps-3" style="width: 50px;">No</th>
                         {{-- TODO 9: Tambahkan header kolom Sampul --}}
+                        <th class="text-center" style="width: 80px;">Sampul</th>
                         <th>Judul Buku</th>
                         <th>Penulis</th>
                         <th>Penerbit</th>
@@ -82,6 +83,13 @@
                         <tr>
                             <td class="ps-3 text-muted">{{ $buku->firstItem() + $index }}</td>
                             {{-- TODO 9: Tampilkan thumbnail sampul buku ($item->cover) jika ada menggunakan asset('storage/' . $item->cover) --}}
+                            <td class="text-center">
+                                @if($item->cover)
+                                    <img src="{{ asset('storage/' . $item->cover) }}" alt="Sampul" class="img-thumbnail" style="max-height: 60px; max-width: 60px; object-fit: cover;">
+                                @else
+                                    <span class="badge bg-light text-muted border">No Image</span>
+                                @endif
+                            </td>
                             <td class="fw-semibold text-dark">{{ $item->judul }}</td>
                             <td>{{ $item->penulis }}</td>
                             <td>{{ $item->penerbit }}</td>
@@ -111,7 +119,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4 text-muted">
+                            {{-- Catatan: colspan saya ubah dari 8 menjadi 9 karena ada tambahan 1 kolom baru --}}
+                            <td colspan="9" class="text-center py-4 text-muted">
                                 @if(request('search'))
                                     Buku dengan kata kunci <strong>"{{ request('search') }}"</strong> tidak ditemukan.
                                 @else
